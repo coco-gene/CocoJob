@@ -1,0 +1,122 @@
+version: '3'
+services:
+  cocojob-mysql80:
+    image: mysql:8.0
+    container_name: cocojob-mysql
+    ports:
+      - "3307:3306"
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./db/conf.d:/etc/mysql/conf.d
+      - ./db/data:/var/lib/mysql
+      - ./db/init-sql:/docker-entrypoint-initdb.d
+    networks:
+      - cocojob
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    restart: always
+
+  cocojob-mongodb:
+    image: mongo
+    container_name: cocojob-mongodb
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - "./mongodb/configdb:/data/configdb"
+      - "./mongodb/db:/data/db"
+      - /etc/localtime:/etc/localtime
+    networks:
+      - cocojob
+    # command: mongod --auth
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root       #初始化管理员用户名和密码
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+      - TZ="Asia/Shanghai"
+    tty: true
+
+  cocojob-mongo-express:
+    image: mongo-express
+    container_name: cocojob-mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    networks:
+      - cocojob
+    environment:
+      ME_CONFIG_MONGODB_URL: "mongodb://root:123456@cocojob-mongodb:27017"
+
+  cocojob-server:
+    build:
+      context: cocojob
+      dockerfile: Dockerfile
+    container_name: cocojob-server
+    ports:
+      - "7700:7700"
+      - "10086:10086"
+      - "10010:10010"
+      - "5001:5005"
+      - "10001:10000"
+    environment:
+      JVMOPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=10000 -Dcom.sun.management.jmxremote.rmi.port=10000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+      PARAM: "--spring.profiles.active=pre"
+    volumes:
+      - ./data/cocojob/cocojob:/root/cocojob
+      - ~/.m2:/root/.m2
+      - /etc/localtime:/etc/localtime
+    networks:
+      - cocojob
+    depends_on:
+      - cocojob-mysql80
+      - cocojob-mongodb
+    restart: always
+
+  cocojob-agent:
+    build:
+      context: cocojob-agent
+      dockerfile: Dockerfile
+    container_name: cocojob-agent
+    ports:
+      - "27777:27777"
+      - "5002:5005"
+      - "10002:10000"
+    environment:
+      JVMOPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=10000 -Dcom.sun.management.jmxremote.rmi.port=10000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+      PARAMS: "--app cocojob-agent-test --server cocojob-server:7700"
+    volumes:
+      - ./data/cocojob/cocojob-agent:/root/cocojob
+      - /etc/localtime:/etc/localtime
+    networks:
+      - cocojob
+    depends_on:
+      - cocojob-server
+    restart: always
+
+  cocojob-agent1:
+    build:
+      context: cocojob-agent
+      dockerfile: Dockerfile
+    container_name: cocojob-agent1
+    ports:
+      - "27778:27777"
+      - "5003:5005"
+      - "10003:10000"
+    environment:
+      JVMOPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=10000 -Dcom.sun.management.jmxremote.rmi.port=10000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+      PARAMS: "--app cocojob-agent-test --server cocojob-server:7700"
+    volumes:
+      - ./data/cocojob/cocojob-agent1:/root/cocojob
+      - /etc/localtime:/etc/localtime
+    networks:
+      - cocojob
+    depends_on:
+      - cocojob-server
+    restart: always
+
+networks:
+  cocojob:
+    # driver: bridge
+    external: true

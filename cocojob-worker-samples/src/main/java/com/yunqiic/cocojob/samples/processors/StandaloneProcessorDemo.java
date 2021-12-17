@@ -1,0 +1,46 @@
+package com.yunqiic.cocojob.samples.processors;
+
+import com.yunqiic.cocojob.worker.core.processor.ProcessResult;
+import com.yunqiic.cocojob.worker.core.processor.TaskContext;
+import com.yunqiic.cocojob.worker.core.processor.sdk.BasicProcessor;
+import com.yunqiic.cocojob.worker.log.OmsLogger;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+
+/**
+ * 单机处理器 示例
+ *
+ * @author zhangchunsheng
+ * @since 2021-12-02
+ */
+@Slf4j
+@Component
+public class StandaloneProcessorDemo implements BasicProcessor {
+
+    @Override
+    public ProcessResult process(TaskContext context) throws Exception {
+
+        OmsLogger omsLogger = context.getOmsLogger();
+        omsLogger.info("StandaloneProcessorDemo start process,context is {}.", context);
+        omsLogger.info("Notice! If you want this job process failed, your jobParams need to be 'failed'");
+
+        omsLogger.info("Let's test the exception~");
+        // 测试异常日志
+        try {
+            Collections.emptyList().add("277");
+        }catch (Exception e) {
+            omsLogger.error("oh~it seems that we have an exception~", e);
+        }
+
+        System.out.println("================ StandaloneProcessorDemo#process ================");
+        System.out.println(context.getJobParams());
+        // 根据控制台参数判断是否成功
+        boolean success = !"failed".equals(context.getJobParams());
+        omsLogger.info("StandaloneProcessorDemo finished process,success: .", success);
+
+        omsLogger.info("anyway, we finished the job successfully~Congratulations!");
+        return new ProcessResult(success, context + ": " + success);
+    }
+}

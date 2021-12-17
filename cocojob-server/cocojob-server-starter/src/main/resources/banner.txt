@@ -1,0 +1,12 @@
+${AnsiColor.GREEN}
+  ____                    _       _
+ / ___|___   ___ ___     | | ___ | |__
+| |   / _ \ / __/ _ \ _  | |/ _ \| '_ \
+| |__| (_) | (_| (_) | |_| | (_) | |_) |
+ \____\___/ \___\___/ \___/ \___/|_.__/
+
+${AnsiColor.BRIGHT_RED}
+* Maintainer: zhangchunsheng423@gmail.com & Team CocoJob
+* OfficialWebsite: https://www.yunqiic.com/
+* SourceCode: https://github.com/coco-gene/CocoJob
+* PoweredBy:  SpringBoot${spring-boot.formatted-version} & Akka (v2.6.12) & Vert.x (v4.0.2)

@@ -1,0 +1,62 @@
+{
+  "groups": [
+    {
+      "name": "cocojob",
+      "type": "com.yunqiic.cocojob.worker.autoconfigure.CocoJobProperties",
+      "sourceType": "com.yunqiic.cocojob.worker.autoconfigure.CocoJobProperties"
+    },
+    {
+      "name": "cocojob.worker",
+      "type": "com.yunqiic.cocojob.worker.autoconfigure.CocoJobProperties$Worker",
+      "sourceType": "com.yunqiic.cocojob.worker.autoconfigure.CocoJobProperties",
+      "sourceMethod": "getWorker()"
+    }
+  ],
+  "properties": [
+    {
+      "name": "cocojob.worker.akka-port",
+      "type": "java.lang.Integer",
+      "description": "Akka port of CocoJob-worker",
+      "sourceType": "com.yunqiic.cocojob.worker.autoconfigure.CocoJobProperties$Worker"
+    },
+    {
+      "name": "cocojob.worker.app-name",
+      "type": "java.lang.String",
+      "description": "Name of application. Register in CocoJob-console to prevent error.",
+      "sourceType": "com.yunqiic.cocojob.worker.autoconfigure.CocoJobProperties$Worker"
+    },
+    {
+      "name": "cocojob.worker.enable-test-mode",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable test mode. In test mode, worker will not connect to server.",
+      "sourceType": "com.yunqiic.cocojob.worker.autoconfigure.CocoJobProperties$Worker",
+      "defaultValue": false
+    },
+    {
+      "name": "cocojob.worker.max-result-length",
+      "type": "java.lang.Integer",
+      "description": "Max length for {@link ProcessResult}#msg, result longer than this property will be truncated.",
+      "sourceType": "com.yunqiic.cocojob.worker.autoconfigure.CocoJobProperties$Worker",
+      "defaultValue": 8096
+    },
+    {
+      "name": "cocojob.worker.server-address",
+      "type": "java.lang.String",
+      "description": "CocoJob-server node(s) address. Ip:port or domain, multiple addresses should be separated with comma",
+      "sourceType": "com.yunqiic.cocojob.worker.autoconfigure.CocoJobProperties$Worker"
+    },
+    {
+      "name": "cocojob.worker.store-strategy",
+      "type": "com.yunqiic.cocojob.worker.common.constants.StoreStrategy",
+      "description": "Local store strategy, disk or memory",
+      "sourceType": "com.yunqiic.cocojob.worker.autoconfigure.CocoJobProperties$Worker"
+    },
+    {
+      "name": "cocojob.worker.max-appended-wf-context-length",
+      "type": "java.lang.Integer",
+      "description": "Max length of appended workflow context. Appended workflow context that is longer than the value will be ignore.",
+      "sourceType": "com.yunqiic.cocojob.worker.autoconfigure.CocoJobProperties$Worker"
+    }
+  ],
+  "hints": []
+}
